@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -12,10 +14,14 @@ const API_KEY = "3cbd1470"
 func main() {
 	fmt.Println(API_KEY)
 
+	component := hello("World")
+	component.Render(context.Background(), os.Stdout)
+
 	r := mux.NewRouter()
 
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Welcome to the home page!")
+		component := hello("World")
+		component.Render(r.Context(), w)
 	})
 
 	r.HandleFunc("/hello/{name}", func(w http.ResponseWriter, r *http.Request) {
