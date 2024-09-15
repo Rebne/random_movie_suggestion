@@ -10,9 +10,12 @@ import (
 const API_KEY = "3cbd1470"
 const SECRET_TOKEN = "secret-token"
 const FILENAME = "id_data.txt"
+const PORT = 8080
 
 func main() {
 	r := mux.NewRouter()
+
+	r.PathPrefix("/public/").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir("public"))))
 
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		app := movieGenerator()
@@ -39,6 +42,6 @@ func main() {
 		}
 	})
 
-	fmt.Println("Server starting on :8080")
-	http.ListenAndServe(":8080", r)
+	fmt.Printf("Server starting on :%d\n", PORT)
+	http.ListenAndServe(fmt.Sprintf(":%d", PORT), r)
 }

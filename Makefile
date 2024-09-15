@@ -1,4 +1,5 @@
 BINARY_NAME=myapp
+PORT=8080
 
 build:
 	go build -o ${BINARY_NAME} main.go
@@ -6,8 +7,8 @@ build:
 run:
 	go run main.go
 
-# templ:
-# 	templ generate -watch -proxy=http://localhost:3000
+templ:
+	templ generate -watch -proxy=http://localhost:${PORT}
 
 tailwind:
-	tailwindcss -i view/css/input.css -o public/styles.css --watch
+	tailwindcss -i ./styles.css -o public/styles.css --watch
