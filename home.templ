@@ -1,0 +1,33 @@
+package main
+
+templ movieGenerator() {
+    @layout("Movie Generator") {
+        <div>
+            @generateButton()
+        </div>
+
+    }
+}
+
+templ layout(title string) {
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>{ title }</title>
+        </head>
+        <body>
+            { children... }
+        </body>
+    </html>
+}
+
+templ generateButton() {
+    <button>Generate</button>
+}
+
+templ hello(name string) {
+    <div>Hello, { name }</div>
+}
+
