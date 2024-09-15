@@ -34,10 +34,15 @@ function setData(ids) {
     }
 }
 
+let ids;
+
 document.addEventListener("DOMContentLoaded", function() {
     const generateButton = document.getElementById("generate-button");
     generateButton.addEventListener("click", function() {
         const randomID = popIDFromLocalStorage();
+        if (!randomID) {
+            setData(ids);
+        }
         console.log(randomID);
     });
 
@@ -46,7 +51,8 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(data => {
                 if (data) {
                     console.log(data);
-                    setData(data.ids);
+                    ids = data.ids;
+                    setData(ids);
                 }
             })
             .catch(error => {
