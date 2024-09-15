@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -12,6 +13,12 @@ const SECRET_TOKEN = "secret-token"
 const FILENAME = "id_data.txt"
 const PORT = 8080
 
+var ids []string
+
+func init() {
+	ids = readFile(FILENAME)
+}
+
 func main() {
 	r := mux.NewRouter()
 
@@ -20,6 +27,14 @@ func main() {
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		app := movieGenerator()
 		app.Render(r.Context(), w)
+	})
+
+	r.HandleFunc("/api/data", func(w http.ResponseWriter, r *http.Request) {
+		data := map[string]interface{}{
+			"ids": ids,
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(data)
 	})
 
 	r.HandleFunc("/secret/{token}/{action}/{id}", func(w http.ResponseWriter, r *http.Request) {

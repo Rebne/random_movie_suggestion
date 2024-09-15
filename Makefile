@@ -10,5 +10,5 @@ run:
 templ:
 	templ generate -watch -proxy=http://localhost:${PORT}
 
-tailwind:
+css:
 	tailwindcss -i ./styles.css -o public/styles.css --watch
