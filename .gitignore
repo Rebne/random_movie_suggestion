@@ -2,3 +2,5 @@
 tmp/
 
 home_templ.go
+
+node_modules/
