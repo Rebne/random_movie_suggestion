@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 const API_KEY = "3cbd1470"
@@ -15,21 +16,40 @@ const PORT = 8080
 
 var ids []string
 
+type MovieData struct {
+	Poster string `json:"Poster"`
+	Title  string `json:"Title"`
+}
+
+func fetchMovieData(id string) (MovieData, error) {
+	url := fmt.Sprintf("http://www.omdbapi.com/?i=%s&apikey=%s", id, API_KEY)
+	resp, err := http.Get(url)
+	if err != nil {
+		return MovieData{}, err
+	}
+	defer resp.Body.Close()
+	var data MovieData
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return MovieData{}, err
+	}
+	return data, nil
+}
+
 func init() {
 	ids = readFile(FILENAME)
 }
 
 func main() {
-	r := mux.NewRouter()
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
 
-	r.PathPrefix("/public/").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir("public"))))
-
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		app := movieGenerator()
 		app.Render(r.Context(), w)
 	})
 
-	r.HandleFunc("/api/data", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/api/data", func(w http.ResponseWriter, r *http.Request) {
 		data := map[string]interface{}{
 			"ids": ids,
 		}
@@ -37,15 +57,30 @@ func main() {
 		json.NewEncoder(w).Encode(data)
 	})
 
-	r.HandleFunc("/secret/{token}/{action}/{id}", func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		token := vars["token"]
-		if token != "your-secret-token" {
+	r.Post("/clicked", func(w http.ResponseWriter, r *http.Request) {
+		id := r.FormValue("id")
+		if id == "" {
+			http.Error(w, "No ID provided", http.StatusBadRequest)
+			return
+		}
+		fmt.Printf("Received ID: %s\n", id)
+		data, err := fetchMovieData(id)
+		if err != nil {
+			http.Error(w, "Failed to fetch movie data", http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "text/html")
+		fmt.Fprintf(w, "<img id='image' src='%s' alt='Movie %s'>", data.Poster, data.Title)
+	})
+
+	r.Get("/secret/{token}/{action}/{id}", func(w http.ResponseWriter, r *http.Request) {
+		token := chi.URLParam(r, "token")
+		if token != SECRET_TOKEN {
 			http.NotFound(w, r)
 			return
 		}
-		id := vars["id"]
-		action := vars["action"]
+		id := chi.URLParam(r, "id")
+		action := chi.URLParam(r, "action")
 		if action == "delete" {
 			deleteFromFile(id, FILENAME)
 			fmt.Fprintf(w, "Deleted %s\n", id)
@@ -56,6 +91,9 @@ func main() {
 			http.NotFound(w, r)
 		}
 	})
+
+	fileServer := http.FileServer(http.Dir("public"))
+	r.Handle("/public/*", http.StripPrefix("/public/", fileServer))
 
 	fmt.Printf("Server starting on :%d\n", PORT)
 	http.ListenAndServe(fmt.Sprintf(":%d", PORT), r)

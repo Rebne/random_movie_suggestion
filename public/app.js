@@ -38,12 +38,13 @@ let ids;
 
 document.addEventListener("DOMContentLoaded", function() {
     const generateButton = document.getElementById("generate-button");
-    generateButton.addEventListener("click", function() {
+    generateButton.addEventListener("htmx:configRequest", function(event) {
+
         const randomID = popIDFromLocalStorage();
         if (!randomID) {
             setData(ids);
         }
-        console.log(randomID);
+        event.detail.parameters['id'] = randomID;
     });
 
     if (localStorage.length === 0) {

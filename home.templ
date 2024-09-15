@@ -3,6 +3,7 @@ package main
 templ movieGenerator() {
     @layout("Movie Generator") {
         <div>
+            @image()
             @generateButton()
         </div>
 
@@ -16,6 +17,7 @@ templ layout(title string) {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link href="/public/styles.css" rel="stylesheet">
+            <script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script>
             <script src="/public/app.js"></script>
             <title>{ title }</title>
         </head>
@@ -25,13 +27,24 @@ templ layout(title string) {
     </html>
 }
 
-templ generateButton() {
+templ image() {
     <div class="flex justify-center items-center h-screen">
-        <button id="generate-button" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-100 hover:text-blue-500">Generate</button>
+        <img id="image">
     </div>
 }
 
-templ hello(name string) {
-    <div>Hello, { name }</div>
+templ generateButton() {
+    <div class="flex justify-center items-center h-screen">
+        <button 
+            hx-post="/clicked"
+            hx-trigger="click"
+            hx-target="#image"
+            hx-swap="outerHTML"
+            id="generate-button" 
+            class="bg-blue-500 text-white px-4 py-2 rounded-md 
+                   hover:bg-blue-100 hover:text-blue-500"
+        >
+            Generate
+        </button>
+    </div>
 }
-
