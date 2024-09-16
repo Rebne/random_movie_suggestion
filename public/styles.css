@@ -554,12 +554,20 @@ video {
   --tw-contain-style:  ;
 }
 
+.mt-4 {
+  margin-top: 1rem;
+}
+
 .flex {
   display: flex;
 }
 
 .h-screen {
   height: 100vh;
+}
+
+.flex-col {
+  flex-direction: column;
 }
 
 .items-center {
