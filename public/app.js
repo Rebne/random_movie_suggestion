@@ -37,8 +37,8 @@ function setData(ids) {
 let ids;
 
 document.addEventListener("DOMContentLoaded", function() {
-    const generateButton = document.getElementById("generate-button");
-    generateButton.addEventListener("htmx:configRequest", function(event) {
+    const container = document.getElementById("container");
+    container.addEventListener("htmx:configRequest", function(event) {
 
         const randomID = popIDFromLocalStorage();
         if (!randomID) {

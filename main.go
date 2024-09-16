@@ -67,11 +67,11 @@ func main() {
 			Poster: "https://m.media-amazon.com/images/M/MV5BNzA5ZDNlZWMtM2NhNS00NDJjLTk4NDItYTRmY2EwMWZlMTY3XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
 			Title:  "Lorde of the Rings The Fellowship of the Ring",
 		}
-		id := r.FormValue("id")
-		if id == "" {
-			http.Error(w, "No ID provided", http.StatusBadRequest)
-			return
-		}
+		// id := r.FormValue("id")
+		// if id == "" {
+		// 	http.Error(w, "No ID provided", http.StatusBadRequest)
+		// 	return
+		// }
 		// fmt.Printf("Received ID: %s\n", id)
 		// data, err := fetchMovieData(id)
 		// if err != nil {

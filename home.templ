@@ -1,12 +1,32 @@
 package main
 
+// templ generateButton() {
+//         <button 
+//             hx-post="/clicked"
+//             hx-trigger="click"
+//             hx-target="#image"
+//             hx-swap="outerHTML"
+//             id="generate-button" 
+//             class="btn btn-primary"
+//         >
+//             Generate
+//         </button>
+// }
+
+templ image() {
+    <img id="image">
+}
+
 templ movieGenerator() {
     @layout("Movie Generator") {
-        <div class="flex flex-col justify-center items-center h-screen">
+        <div
+        hx-post="/clicked"
+        hx-trigger="load"
+        hx-swap="innerHTML"
+        id="container"
+        class="flex flex-col justify-center items-center h-screen">
             @image()
-            @generateButton()
         </div>
-
     }
 }
 
@@ -41,20 +61,3 @@ templ layout(title string) {
     </html>
 }
 
-templ image() {
-    <img id="image">
-}
-
-templ generateButton() {
-        <button 
-            hx-post="/clicked"
-            hx-trigger="click"
-            hx-target="#image"
-            hx-swap="outerHTML"
-            id="generate-button" 
-            class="bg-blue-500 text-white px-4 py-2 rounded-md 
-                   hover:bg-blue-100 hover:text-blue-500 mt-4"
-        >
-            Generate
-        </button>
-}
