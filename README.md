@@ -1,3 +1,7 @@
+# TODO list
+
+- [ ] Handle added movie on client side
+
 # movie_generator
 Generates a random movie in Elsa &amp; Rene recommendations
 
