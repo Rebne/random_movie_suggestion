@@ -2,6 +2,24 @@ package main
 
 import "strings"
 
+templ app(title string) {
+	@layout(title) {
+		@navBar()
+		<div class="flex-1 flex items-center justify-center">
+			<div
+				hx-post="/generate"
+				hx-trigger="load"
+				hx-swap="innerHTML"
+				id="container"
+				hx-vals='js:{"movieID": getRandomID()}'
+			>
+				@movieCardSkeleton()
+			</div>
+		</div>
+		@aboutDrawer()
+	}
+}
+
 templ navBar() {
 	<div class="navbar bg-base-100">
 		<div class="flex-1"></div>
@@ -36,7 +54,7 @@ templ movieCard(data MovieData) {
 		<div class="card-body">
 			<h2 class="card-title">
 				{ data.Title } ({ data.Year })
-				<div class="badge badge-secondary">{ data.Runtime }</div>
+				<div class="badge badge-secondary">{ formatRuntimeString(data.Runtime) }</div>
 			</h2>
 			<p>{ data.Plot }</p>
 			<div class="flex flex-wrap justify-end">
@@ -120,23 +138,6 @@ templ movieCardSkeleton() {
 			</div>
 		</div>
 	</div>
-}
-
-templ app(title string) {
-	@layout(title) {
-		@navBar()
-		<div class="flex-1 flex items-center justify-center">
-			<div
-				hx-post="/clicked"
-				hx-trigger="load"
-				hx-swap="innerHTML"
-				id="container"
-			>
-				@movieCardSkeleton()
-			</div>
-		</div>
-		@aboutDrawer()
-	}
 }
 
 templ layout(title string) {

@@ -5,7 +5,6 @@ async function fetchData() {
             return data;
         })
         .catch(error => {
-            console.error("Error fetching data:", error);
             throw error;
         });
 }
@@ -34,30 +33,17 @@ function setData(ids) {
     }
 }
 
-let ids;
-
-document.addEventListener("DOMContentLoaded", function() {
-    const container = document.getElementById("container");
-    container.addEventListener("htmx:configRequest", function(event) {
-
-        const randomID = popIDFromLocalStorage();
-        if (!randomID) {
-            setData(ids);
-        }
-        event.detail.parameters['id'] = randomID;
-    });
-
-    if (localStorage.length === 0) {
-        fetchData()
-            .then(data => {
-                if (data) {
-                    console.log(data);
-                    ids = data.ids;
-                    setData(ids);
-                }
-            })
-            .catch(error => {
-                console.error("Error setting data:", error);
-            });
+function getRandomID() {
+    let randomID = popIDFromLocalStorage();
+    if (!randomID) {
+        return fetchData().then(data => {
+            setData(data.ids);
+            randomID = popIDFromLocalStorage();
+            return randomID;
+        }).catch(error => {
+            console.error("Error fetching data in getRandomID:", error);
+            return null;
+        });
     }
-})
+    return randomID;
+}

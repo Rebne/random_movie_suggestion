@@ -2,12 +2,29 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
 )
+
+func fetchMovieData(id string) (MovieData, error) {
+	url := fmt.Sprintf("http://www.omdbapi.com/?i=%s&apikey=%s", id, API_KEY)
+	resp, err := http.Get(url)
+	if err != nil {
+		return MovieData{}, err
+	}
+	defer resp.Body.Close()
+	var data MovieData
+	err = json.NewDecoder(resp.Body).Decode(&data)
+	if err != nil {
+		return MovieData{}, err
+	}
+	return data, nil
+}
 
 func isDigit(b byte) bool {
 	return b >= '0' && b <= '9'

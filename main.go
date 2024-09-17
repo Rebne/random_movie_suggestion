@@ -1,13 +1,11 @@
 package main
 
-
 import (
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -48,6 +46,15 @@ func init() {
 	if err != nil {
 		log.Fatal("Error reading file")
 	}
+
+	_ = MovieData{
+		Poster:  "https://m.media-amazon.com/images/M/MV5BNzA5ZDNlZWMtM2NhNS00NDJjLTk4NDItYTRmY2EwMWZlMTY3XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
+		Title:   "Lorde of the Rings The Fellowship of the Ring",
+		Year:    "2001",
+		Plot:    "A meek Hobbit from the Shire and eight companions set out on a journey to destroy the powerful One Ring and save Middle-earth from the Dark Lord Sauron.",
+		Runtime: formatRuntimeString("178 min"),
+		Genre:   "Action, Adventure, Drama",
+	}
 }
 
 func main() {
@@ -67,28 +74,23 @@ func main() {
 		json.NewEncoder(w).Encode(data)
 	})
 
-	r.Post("/clicked", func(w http.ResponseWriter, r *http.Request) {
-		time.Sleep(3 * time.Second)
-		testMovieData := MovieData{
-			Poster:  "https://m.media-amazon.com/images/M/MV5BNzA5ZDNlZWMtM2NhNS00NDJjLTk4NDItYTRmY2EwMWZlMTY3XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
-			Title:   "Lorde of the Rings The Fellowship of the Ring",
-			Year:    "2001",
-			Plot:    "A meek Hobbit from the Shire and eight companions set out on a journey to destroy the powerful One Ring and save Middle-earth from the Dark Lord Sauron.",
-			Runtime: formatRuntimeString("178 min"),
-			Genre:   "Action, Adventure, Drama",
+	r.Post("/generate", func(w http.ResponseWriter, r *http.Request) {
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, "Error parsing form data", http.StatusBadRequest)
+			return
 		}
-		// id := r.FormValue("id")
-		// if id == "" {
-		// 	http.Error(w, "No ID provided", http.StatusBadRequest)
-		// 	return
-		// }
-		// fmt.Printf("Received ID: %s\n", id)
-		// data, err := fetchMovieData(id)
-		// if err != nil {
-		// 	http.Error(w, "Failed to fetch movie data", http.StatusInternalServerError)
-		// 	return
-		// }
-		component := movieCard(testMovieData)
+
+		// Access form values
+		movieID := r.FormValue("movieID")
+		data, err := fetchMovieData(movieID)
+		if err != nil {
+			fmt.Println("Error fetching movie data:", err)
+			http.Error(w, "Failed to fetch movie data", http.StatusInternalServerError)
+			return
+		}
+
+		component := movieCard(data)
 		component.Render(r.Context(), w)
 	})
 
