@@ -62,7 +62,7 @@ func main() {
 	r.Use(middleware.Logger)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		app := app("ElsaRene Movie Generator")
+		app := app("ElsaRene Random Movie Generator")
 		app.Render(r.Context(), w)
 	})
 
@@ -81,7 +81,6 @@ func main() {
 			return
 		}
 
-		// Access form values
 		movieID := r.FormValue("movieID")
 		data, err := fetchMovieData(movieID)
 		if err != nil {
