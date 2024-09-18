@@ -1,26 +1,17 @@
-async function fetchData() {
-    return fetch("/api/data")
-        .then(response => response.json())
-        .then(data => {
-            return data;
-        })
-        .catch(error => {
-            throw error;
-        });
+function getRandomIndexForLocalStorage(length) {
+    const randomIndex = Math.floor(Math.random() * length);
+    return randomIndex;
 }
 
 function popIDFromLocalStorage() {
-    const keys = Object.keys(localStorage);
+    const keys = Object.keys(localStorage).filter(key => key !== 'totalIds');
     if (keys.length === 0) {
         return null;
     }
-    for (let i = 0; i < keys.length; i++) {
-        const value = keys[i];
-        if (value != "totalIds") {
-            localStorage.removeItem(value);
-            return value
-        }
-    }
+    const randomIndex = getRandomIndexForLocalStorage(keys.length);
+    const id = keys[randomIndex];
+    localStorage.removeItem(id);
+    return id;
 }
 
 function setData(ids) {
@@ -37,6 +28,7 @@ async function initializeLocalStorage() {
             const response = await fetch('/api/data');
             const data = await response.json();
             const storageData = data.ids;
+            console.log(storageData)
             if (localStorage.length == 0) {
                 localStorage.setItem('totalIds', storageData.length.toString());
             }
