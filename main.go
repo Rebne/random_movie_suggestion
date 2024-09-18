@@ -102,6 +102,8 @@ func main() {
 			w.WriteHeader(http.StatusOK)
 			fmt.Fprintf(w, "ID: %s DELETED FROM IDS", id)
 		case "add":
+			// Also appending to current working server instance
+			ids = append(ids, id)
 			err := appendToFile(id, FILENAME)
 			if err != nil {
 				http.Error(w, fmt.Sprintf("Error adding ID: %s", err), http.StatusBadRequest)
