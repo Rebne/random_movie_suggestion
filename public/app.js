@@ -17,7 +17,7 @@ function popIDFromLocalStorage() {
     for (let i = 0; i < keys.length; i++) {
         const value = keys[i];
         if (value != "totalIds") {
-            localStorage.removeItem('value');
+            localStorage.removeItem(value);
             return value
         }
     }
