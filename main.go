@@ -46,15 +46,6 @@ func init() {
 	if err != nil {
 		log.Fatal("Error reading file")
 	}
-
-	_ = MovieData{
-		Poster:  "https://m.media-amazon.com/images/M/MV5BNzA5ZDNlZWMtM2NhNS00NDJjLTk4NDItYTRmY2EwMWZlMTY3XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
-		Title:   "Lorde of the Rings The Fellowship of the Ring",
-		Year:    "2001",
-		Plot:    "A meek Hobbit from the Shire and eight companions set out on a journey to destroy the powerful One Ring and save Middle-earth from the Dark Lord Sauron.",
-		Runtime: formatRuntimeString("178 min"),
-		Genre:   "Action, Adventure, Drama",
-	}
 }
 
 func main() {
