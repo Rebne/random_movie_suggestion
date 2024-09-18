@@ -13,6 +13,7 @@ import (
 type ID struct {
 	MovieID string `json:"movieID"`
 	Index   int    `json:"index"`
+	Title   string `json:"title"`
 }
 
 type IDdata struct {
@@ -88,8 +89,11 @@ func isValidIMDbID(id string) bool {
 }
 
 func addID(dataSet IDdata, movieID string, filename string) error {
-
-	dataSet.IDs = append(dataSet.IDs, ID{MovieID: movieID, Index: dataSet.Length})
+	movieData, err := fetchMovieData(movieID)
+	if err != nil {
+		return fmt.Errorf("failed to fetch moviedata from OMD")
+	}
+	dataSet.IDs = append(dataSet.IDs, ID{MovieID: movieID, Index: dataSet.Length, Title: movieData.Title})
 	dataSet.Length++
 	return writeIdData(filename, dataSet)
 }
