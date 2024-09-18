@@ -125,7 +125,7 @@ func main() {
 				return
 			}
 			w.WriteHeader(http.StatusOK)
-			fmt.Fprintf(w, "ID: %s DELETED FROM IDS", id)
+			fmt.Fprintf(w, "ID: %s DELETED FROM IDS\n", id)
 		case "add":
 			// Also appending to current working server instance
 			err := addID(idData, id, FILENAME)
@@ -134,7 +134,7 @@ func main() {
 				return
 			}
 			w.WriteHeader(http.StatusOK)
-			fmt.Fprintf(w, "ID: %s ADDED TO IDS", id)
+			fmt.Fprintf(w, "ID: %s ADDED TO IDS\n", id)
 		default:
 			http.Error(w, fmt.Sprintf("Error: invalid action '%s' for id %s", action, id), http.StatusBadRequest)
 		}
