@@ -9,20 +9,18 @@ async function fetchData() {
         });
 }
 
-function getRandomIndexForLocalStorage(length) {
-    const randomIndex = Math.floor(Math.random() * length);
-    return randomIndex;
-}
-
 function popIDFromLocalStorage() {
     const keys = Object.keys(localStorage);
     if (keys.length === 0) {
         return null;
     }
-    const randomIndex = getRandomIndexForLocalStorage(keys.length);
-    const id = keys[randomIndex];
-    localStorage.removeItem(id);
-    return id;
+    for (let i = 0; i < keys.length; i++) {
+        const value = keys[i];
+        if (value != "totalIds") {
+            localStorage.removeItem('value');
+            return value
+        }
+    }
 }
 
 function setData(ids) {
@@ -35,21 +33,23 @@ function setData(ids) {
 
 async function initializeLocalStorage() {
     try {
-        const response = await fetch('/api/data');
-        const data = await response.json();
-        const storageData = data.ids;
-
         if (localStorage.length <= 1) {
+            const response = await fetch('/api/data');
+            const data = await response.json();
+            const storageData = data.ids;
             if (localStorage.length == 0) {
-                localStorage.setItem('itemLength', storageData.length.toString());
+                localStorage.setItem('totalIds', storageData.length.toString());
             }
             setData(storageData)
-        }
-        else {
-            console.log(localStorage.getItem('itemLength'));
-            const current = parseInt(localStorage.getItem('itemLength'));
-            console.log(current, storageData.length)
-            if (current != storageData.length) {
+        } else {
+            console.log('Fetching data length from server...');
+            const response = await fetch('/api/data/length');
+            console.log('Response received:', response);
+            const data = await response.json();
+            console.log('Data parsed:', data);
+            const current = parseInt(localStorage.getItem('totalIds'));
+            console.log(current, data.length)
+            if (current != data.length) {
                 // logic for adding the new movies
                 console.error('Oh no!')
             }
@@ -57,7 +57,6 @@ async function initializeLocalStorage() {
     } catch (error) {
         console.error('Error occured fetching API data from server: ', error)
     }
-
 }
 
 htmx.onLoad((elt) => {

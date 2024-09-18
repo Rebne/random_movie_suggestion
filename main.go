@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -57,9 +59,22 @@ func main() {
 		app.Render(r.Context(), w)
 	})
 
-	r.Get("/api/data", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/api/data/length", func(w http.ResponseWriter, r *http.Request) {
 		data := map[string]interface{}{
-			"ids": ids,
+			"length": len(ids),
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(data)
+	})
+
+	r.Get("/api/data", func(w http.ResponseWriter, r *http.Request) {
+		temp := ids
+		random := rand.New(rand.NewSource(time.Now().UnixNano()))
+		random.Shuffle(len(temp), func(i, j int) {
+			temp[i], temp[j] = temp[j], temp[i]
+		})
+		data := map[string]interface{}{
+			"ids": temp,
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(data)
