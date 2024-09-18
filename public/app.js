@@ -34,25 +34,25 @@ function setData(ids) {
 }
 
 document.addEventListener('htmx:beforeRequest', async () => {
-    let storageData;
-    await fetch('/api/data')
-        .then(response => response.json())
-        .then(data => {
-            storageData = data.ids;
-        })
-        .catch(error => {
-            throw error;
-        });
-    if (localStorage.length <= 1) {
-        if (localStorage.length == 0) {
-            localStorage.setItem('itemLength', storageData.length.toString());
+    try {
+        const response = await fetch('/api/data');
+        const data = await response.json();
+        const storageData = data.ids;
+
+        if (localStorage.length <= 1) {
+            if (localStorage.length == 0) {
+                localStorage.setItem('itemLength', storageData.length.toString());
+            }
+            setData(storageData)
+        } else {
+            const current = parseInt(localStorage.getItem('itemLength'));
+            if (current != storageData.length) {
+                // logic for adding the new movies
+                console.error('Oh no!')
+            }
         }
-        setData(storageData)
-    } else {
-        const current = localStorage.getItem('itemLength').parseInt();
-        if (current != storageData.length) {
-            // logic for adding the new movies
-        }
+    } catch (error) {
+        console.error('Error occured fetching API data from server: ', error)
     }
 
 
