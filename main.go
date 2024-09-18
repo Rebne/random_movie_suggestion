@@ -17,7 +17,7 @@ var (
 	SECRET_TOKEN string
 	FILENAME     string
 	PORT         string
-	ids          []string
+	idData       IDdata
 )
 
 func init() {
@@ -33,9 +33,9 @@ func init() {
 	if API_KEY == "" || SECRET_TOKEN == "" || FILENAME == "" || PORT == "" {
 		log.Fatal("Missing required environment variables")
 	}
-	ids, err = readFile(FILENAME)
+	idData, err = readIDData(FILENAME)
 	if err != nil {
-		log.Fatal("Error reading file")
+		log.Fatal("Error reading JSON from file", err.Error())
 	}
 }
 
@@ -50,7 +50,7 @@ func main() {
 
 	r.Get("/api/data/length", func(w http.ResponseWriter, r *http.Request) {
 		data := map[string]interface{}{
-			"length": len(ids),
+			"length": idData.Length,
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(data)
@@ -58,7 +58,7 @@ func main() {
 
 	r.Get("/api/data", func(w http.ResponseWriter, r *http.Request) {
 		data := map[string]interface{}{
-			"ids": ids,
+			"ids": idData.IDs,
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(data)
@@ -93,7 +93,7 @@ func main() {
 		action := chi.URLParam(r, "action")
 		switch action {
 		case "delete":
-			err := deleteFromFile(id, FILENAME)
+			err := removeID(idData, id, FILENAME)
 			if err != nil {
 				http.Error(w, fmt.Sprintf("Error deleting ID: %s", err), http.StatusBadRequest)
 				return
@@ -102,8 +102,7 @@ func main() {
 			fmt.Fprintf(w, "ID: %s DELETED FROM IDS", id)
 		case "add":
 			// Also appending to current working server instance
-			ids = append(ids, id)
-			err := appendToFile(id, FILENAME)
+			err := addID(idData, id, FILENAME)
 			if err != nil {
 				http.Error(w, fmt.Sprintf("Error adding ID: %s", err), http.StatusBadRequest)
 				return

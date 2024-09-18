@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -12,8 +11,8 @@ import (
 )
 
 type ID struct {
-	ID    int `json:"id"`
-	Index int `json:"index"`
+	MovieID    string `json:"movieID"`
+	Identifier int    `json:"identifier"`
 }
 
 type IDdata struct {
@@ -80,6 +79,26 @@ func isValidIMDbID(id string) bool {
 	return match
 }
 
+func addID(dataSet IDdata, movieID string, filename string) error {
+	dataSet.IDs = append(dataSet.IDs, ID{MovieID: movieID, Identifier: dataSet.Length})
+	dataSet.Length++
+	return writeIdData(filename, dataSet)
+}
+
+func removeID(dataSet IDdata, movieID string, filename string) error {
+	if !isValidIMDbID(movieID) {
+		return fmt.Errorf("not a valid IMDb ID")
+	}
+	for i := range dataSet.IDs {
+		if dataSet.IDs[i].MovieID == movieID {
+			dataSet.IDs = append(dataSet.IDs[:i], dataSet.IDs[i+1:]...)
+			dataSet.Length--
+			return writeIdData(filename, dataSet)
+		}
+	}
+	return fmt.Errorf("ID not found")
+}
+
 func readIDData(filename string) (IDdata, error) {
 	file, err := os.ReadFile(filename)
 	if err != nil {
@@ -94,24 +113,7 @@ func readIDData(filename string) (IDdata, error) {
 	return data, nil
 }
 
-func readFile(filename string) ([]string, error) {
-	var ids []string
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		ids = append(ids, scanner.Text())
-	}
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-	return ids, nil
-}
-
-func writeIDdata(filename string, data IDdata) error {
+func writeIdData(filename string, data IDdata) error {
 	jsonData, err := json.MarshalIndent(data, "", "    ")
 	if err != nil {
 		return err
@@ -121,49 +123,4 @@ func writeIDdata(filename string, data IDdata) error {
 		return err
 	}
 	return nil
-}
-
-func appendToFile(line string, filename string) error {
-	file, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	if !isValidIMDbID(line) {
-		return fmt.Errorf("invalid IMDb ID: %s", line)
-	}
-	_, err = file.WriteString(line + "\n")
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func deleteFromFile(lineToDelete string, filename string) error {
-	file, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	var lines []string
-	found := false
-	for scanner.Scan() {
-		line := scanner.Text()
-		if line != lineToDelete {
-			lines = append(lines, line)
-		} else {
-			found = true
-		}
-	}
-	if err := scanner.Err(); err != nil {
-		return err
-	}
-
-	if !found {
-		return fmt.Errorf("line to delete not found: %s", lineToDelete)
-	}
-
-	return os.WriteFile(filename, []byte(strings.Join(lines, "\n")), 0644)
 }
