@@ -93,7 +93,7 @@ func main() {
 		component.Render(r.Context(), w)
 	})
 
-	r.Put("/secret/{token}/{id}", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/secret/{token}/{action}/{id}", func(w http.ResponseWriter, r *http.Request) {
 		token := chi.URLParam(r, "token")
 		if token != SECRET_TOKEN {
 			http.NotFound(w, r)
@@ -105,7 +105,7 @@ func main() {
 		case "delete":
 			err := deleteFromFile(id, FILENAME)
 			if err != nil {
-				http.Error(w, fmt.Sprintf("Error deleting ID: %s", err), http.StatusInternalServerError)
+				http.Error(w, fmt.Sprintf("Error deleting ID: %s", err), http.StatusBadRequest)
 				return
 			}
 			w.WriteHeader(http.StatusOK)
@@ -113,7 +113,7 @@ func main() {
 		case "add":
 			err := appendToFile(id, FILENAME)
 			if err != nil {
-				http.Error(w, fmt.Sprintf("Error adding ID: %s", err), http.StatusInternalServerError)
+				http.Error(w, fmt.Sprintf("Error adding ID: %s", err), http.StatusBadRequest)
 				return
 			}
 			w.WriteHeader(http.StatusOK)
