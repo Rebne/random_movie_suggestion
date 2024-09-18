@@ -38,7 +38,16 @@ async function initializeLocalStorage() {
             const data = await response.json();
             const current = parseInt(localStorage.getItem('totalIds'));
             if (current != data.length) {
-                // logic for adding the new movies
+                const updateResponse = await fetch('/api/data/new', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ currentLength: localStorage.getItem('length') })
+                });
+                const updateData = await updateResponse.json();
+                setData(updateData.newIDs)
+                localStorage.setItem('length', updateData.newLength)
             }
         }
     } catch (error) {

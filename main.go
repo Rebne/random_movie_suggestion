@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -59,6 +60,28 @@ func main() {
 	r.Get("/api/data", func(w http.ResponseWriter, r *http.Request) {
 		data := map[string]interface{}{
 			"ids": getMovieIDs(idData),
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(data)
+	})
+	r.Post("/api/data/new", func(w http.ResponseWriter, r *http.Request) {
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, "Error parsing form data", http.StatusBadRequest)
+			return
+		}
+		prev, err := strconv.Atoi(r.FormValue("currentLength"))
+		if err != nil {
+			http.Error(w, "Error formatting currentLength to integer", http.StatusBadRequest)
+			return
+		}
+		newIDs, err := getNewIDs(prev, idData)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		data := map[string]interface{}{
+			"newLength": idData.Length,
+			"newIDs":    newIDs,
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(data)

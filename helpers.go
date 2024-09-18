@@ -11,8 +11,8 @@ import (
 )
 
 type ID struct {
-	MovieID    string `json:"movieID"`
-	Identifier int    `json:"identifier"`
+	MovieID string `json:"movieID"`
+	Index   int    `json:"index"`
 }
 
 type IDdata struct {
@@ -88,7 +88,7 @@ func isValidIMDbID(id string) bool {
 }
 
 func addID(dataSet IDdata, movieID string, filename string) error {
-	dataSet.IDs = append(dataSet.IDs, ID{MovieID: movieID, Identifier: dataSet.Length})
+	dataSet.IDs = append(dataSet.IDs, ID{MovieID: movieID, Index: dataSet.Length})
 	dataSet.Length++
 	return writeIdData(filename, dataSet)
 }
@@ -101,10 +101,30 @@ func removeID(dataSet IDdata, movieID string, filename string) error {
 		if dataSet.IDs[i].MovieID == movieID {
 			dataSet.IDs = append(dataSet.IDs[:i], dataSet.IDs[i+1:]...)
 			dataSet.Length--
+			dataSet.reIndexMovieIDs()
 			return writeIdData(filename, dataSet)
 		}
 	}
 	return fmt.Errorf("ID not found")
+}
+
+func getNewIDs(prevLength int, data IDdata) ([]string, error) {
+	var result []string
+	for _, item := range data.IDs {
+		if item.Index >= prevLength {
+			result = append(result, item.MovieID)
+		}
+	}
+	if len(result) == 0 {
+		return result, fmt.Errorf("error no new IDS found")
+	}
+	return result, nil
+}
+
+func (data *IDdata) reIndexMovieIDs() {
+	for i := 0; i < data.Length; i++ {
+		data.IDs[i].Index = i
+	}
 }
 
 func readIDData(filename string) (IDdata, error) {
