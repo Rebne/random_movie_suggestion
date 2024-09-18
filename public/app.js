@@ -33,7 +33,7 @@ function setData(ids) {
     }
 }
 
-document.addEventListener('htmx:beforeRequest', async () => {
+async function initializeLocalStorage() {
     try {
         const response = await fetch('/api/data');
         const data = await response.json();
@@ -44,8 +44,11 @@ document.addEventListener('htmx:beforeRequest', async () => {
                 localStorage.setItem('itemLength', storageData.length.toString());
             }
             setData(storageData)
-        } else {
+        }
+        else {
+            console.log(localStorage.getItem('itemLength'));
             const current = parseInt(localStorage.getItem('itemLength'));
+            console.log(current, storageData.length)
             if (current != storageData.length) {
                 // logic for adding the new movies
                 console.error('Oh no!')
@@ -55,5 +58,11 @@ document.addEventListener('htmx:beforeRequest', async () => {
         console.error('Error occured fetching API data from server: ', error)
     }
 
+}
 
+htmx.onLoad((elt) => {
+    if (elt.tagName == 'BODY') {
+        initializeLocalStorage();
+        htmx.ajax('POST', '/generate', { target: '#container', values: { 'movieID': popIDFromLocalStorage() } });
+    }
 })
