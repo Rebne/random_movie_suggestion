@@ -29,6 +29,14 @@ type MovieData struct {
 	Genre   string `json:"Genre"`
 }
 
+func getMovieIDs(data IDdata) []string {
+	movieIDs := make([]string, data.Length)
+	for i, id := range data.IDs {
+		movieIDs[i] = id.MovieID
+	}
+	return movieIDs
+}
+
 func fetchMovieData(id string) (MovieData, error) {
 	url := fmt.Sprintf("http://www.omdbapi.com/?i=%s&apikey=%s", id, API_KEY)
 	resp, err := http.Get(url)

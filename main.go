@@ -58,7 +58,7 @@ func main() {
 
 	r.Get("/api/data", func(w http.ResponseWriter, r *http.Request) {
 		data := map[string]interface{}{
-			"ids": idData.IDs,
+			"ids": getMovieIDs(idData),
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(data)
