@@ -12,15 +12,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type MovieData struct {
-	Title   string `json:"Title"`
-	Year    string `json:"Year"`
-	Plot    string `json:"Plot"`
-	Runtime string `json:"Runtime"`
-	Poster  string `json:"Poster"`
-	Genre   string `json:"Genre"`
-}
-
 var (
 	API_KEY      string
 	SECRET_TOKEN string

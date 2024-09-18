@@ -11,6 +11,25 @@ import (
 	"strings"
 )
 
+type ID struct {
+	ID    int `json:"id"`
+	Index int `json:"index"`
+}
+
+type IDdata struct {
+	Length int  `json:"length"`
+	IDs    []ID `json:"ids"`
+}
+
+type MovieData struct {
+	Title   string `json:"Title"`
+	Year    string `json:"Year"`
+	Plot    string `json:"Plot"`
+	Runtime string `json:"Runtime"`
+	Poster  string `json:"Poster"`
+	Genre   string `json:"Genre"`
+}
+
 func fetchMovieData(id string) (MovieData, error) {
 	url := fmt.Sprintf("http://www.omdbapi.com/?i=%s&apikey=%s", id, API_KEY)
 	resp, err := http.Get(url)
@@ -61,6 +80,20 @@ func isValidIMDbID(id string) bool {
 	return match
 }
 
+func readIDData(filename string) (IDdata, error) {
+	file, err := os.ReadFile(filename)
+	if err != nil {
+		return IDdata{}, err
+	}
+
+	var data IDdata
+	err = json.Unmarshal(file, &data)
+	if err != nil {
+		return IDdata{}, err
+	}
+	return data, nil
+}
+
 func readFile(filename string) ([]string, error) {
 	var ids []string
 	file, err := os.Open(filename)
@@ -76,6 +109,18 @@ func readFile(filename string) ([]string, error) {
 		return nil, err
 	}
 	return ids, nil
+}
+
+func writeIDdata(filename string, data IDdata) error {
+	jsonData, err := json.MarshalIndent(data, "", "    ")
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(filename, jsonData, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func appendToFile(line string, filename string) error {
