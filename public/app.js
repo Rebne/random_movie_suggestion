@@ -33,17 +33,15 @@ function setData(ids) {
     }
 }
 
-function getRandomID() {
-    let randomID = popIDFromLocalStorage();
-    if (!randomID) {
-        return fetchData().then(data => {
-            setData(data.ids);
-            randomID = popIDFromLocalStorage();
-            return randomID;
-        }).catch(error => {
-            console.error("Error fetching data in getRandomID:", error);
-            return null;
-        });
+document.addEventListener('htmx:beforeProcessNode', async () => {
+    if (localStorage.length == 0) {
+        await fetch('/api/data')
+            .then(response => response.json())
+            .then(data => {
+                setData(data.ids)
+            })
+            .catch(error => {
+                throw error;
+            });
     }
-    return randomID;
-}
+})

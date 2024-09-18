@@ -11,7 +11,7 @@ templ app(title string) {
 				hx-trigger="load"
 				hx-swap="innerHTML"
 				id="container"
-				hx-vals='js:{"movieID": getRandomID()}'
+				hx-vals='js:{"movieID": popIDFromLocalStorage()}'
 			>
 				@movieCardSkeleton()
 			</div>
