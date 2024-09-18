@@ -109,6 +109,21 @@ func main() {
 		component.Render(r.Context(), w)
 	})
 
+	r.Get("/secret/{token}/showlist", func(w http.ResponseWriter, r *http.Request) {
+		token := chi.URLParam(r, "token")
+		if token != SECRET_TOKEN {
+			http.NotFound(w, r)
+			return
+		}
+
+		fileContents, err := os.ReadFile(FILENAME)
+		if err != nil {
+			http.Error(w, "Error reading file", http.StatusInternalServerError)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(fileContents)
+	})
+
 	r.Post("/secret/{token}/{action}/{id}", func(w http.ResponseWriter, r *http.Request) {
 		token := chi.URLParam(r, "token")
 		if token != SECRET_TOKEN {
