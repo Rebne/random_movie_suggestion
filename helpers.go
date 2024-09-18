@@ -23,6 +23,9 @@ func fetchMovieData(id string) (MovieData, error) {
 	if err != nil {
 		return MovieData{}, err
 	}
+	if data.Title == "" {
+		return MovieData{}, fmt.Errorf("error, no movie data returned from OMDb API")
+	}
 	return data, nil
 }
 
