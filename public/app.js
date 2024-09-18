@@ -33,15 +33,27 @@ function setData(ids) {
     }
 }
 
-document.addEventListener('htmx:beforeProcessNode', async () => {
-    if (localStorage.length == 0) {
-        await fetch('/api/data')
-            .then(response => response.json())
-            .then(data => {
-                setData(data.ids)
-            })
-            .catch(error => {
-                throw error;
-            });
+document.addEventListener('htmx:beforeRequest', async () => {
+    let storageData;
+    await fetch('/api/data')
+        .then(response => response.json())
+        .then(data => {
+            storageData = data.ids;
+        })
+        .catch(error => {
+            throw error;
+        });
+    if (localStorage.length <= 1) {
+        if (localStorage.length == 0) {
+            localStorage.setItem('itemLength', storageData.length.toString());
+        }
+        setData(storageData)
+    } else {
+        const current = localStorage.getItem('itemLength').parseInt();
+        if (current != storageData.length) {
+            // logic for adding the new movies
+        }
     }
+
+
 })
