@@ -27,12 +27,11 @@ async function initializeLocalStorage() {
         if (localStorage.length <= 1) {
             const response = await fetch('/api/data');
             const data = await response.json();
-            const storageData = data.ids;
-            console.log(storageData)
+            const ids = data.ids;
             if (localStorage.length == 0) {
-                localStorage.setItem('totalIds', storageData.length.toString());
+                localStorage.setItem('totalIds', data.total.toString());
             }
-            setData(storageData)
+            setData(ids);
         } else {
             const response = await fetch('/api/data/length');
             const data = await response.json();
@@ -46,12 +45,12 @@ async function initializeLocalStorage() {
                     body: JSON.stringify({ currentLength: localStorage.getItem('length') })
                 });
                 const updateData = await updateResponse.json();
-                setData(updateData.newIDs)
-                localStorage.setItem('length', updateData.newLength)
+                setData(updateData.newIDs);
+                localStorage.setItem('totalIds', updateData.newLength);
             }
         }
     } catch (error) {
-        console.error('Error occured fetching API data from server: ', error)
+        console.error('Error occurred fetching API data from server: ', error);
     }
 }
 
