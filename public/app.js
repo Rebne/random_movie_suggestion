@@ -42,16 +42,11 @@ async function initializeLocalStorage() {
             }
             setData(storageData)
         } else {
-            console.log('Fetching data length from server...');
             const response = await fetch('/api/data/length');
-            console.log('Response received:', response);
             const data = await response.json();
-            console.log('Data parsed:', data);
             const current = parseInt(localStorage.getItem('totalIds'));
-            console.log(current, data.length)
             if (current != data.length) {
                 // logic for adding the new movies
-                console.error('Oh no!')
             }
         }
     } catch (error) {
@@ -59,9 +54,9 @@ async function initializeLocalStorage() {
     }
 }
 
-htmx.onLoad((elt) => {
+htmx.onLoad(async (elt) => {
     if (elt.tagName == 'BODY') {
-        initializeLocalStorage();
+        await initializeLocalStorage();
         htmx.ajax('POST', '/generate', { target: '#container', values: { 'movieID': popIDFromLocalStorage() } });
     }
 })

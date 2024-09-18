@@ -68,11 +68,13 @@ func main() {
 	})
 
 	r.Get("/api/data", func(w http.ResponseWriter, r *http.Request) {
-		temp := ids
+		temp := make([]string, len(ids))
+		copy(temp, ids)
 		random := rand.New(rand.NewSource(time.Now().UnixNano()))
 		random.Shuffle(len(temp), func(i, j int) {
 			temp[i], temp[j] = temp[j], temp[i]
 		})
+		fmt.Println(temp)
 		data := map[string]interface{}{
 			"ids": temp,
 		}
