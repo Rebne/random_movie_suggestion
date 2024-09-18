@@ -106,7 +106,7 @@ func main() {
 		component.Render(r.Context(), w)
 	})
 
-	r.Get("/secret/{token}/{action}/{id}", func(w http.ResponseWriter, r *http.Request) {
+	r.Post("/secret/{token}/{action}/{id}", func(w http.ResponseWriter, r *http.Request) {
 		token := chi.URLParam(r, "token")
 		if token != SECRET_TOKEN {
 			http.NotFound(w, r)
