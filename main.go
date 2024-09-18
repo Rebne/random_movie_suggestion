@@ -117,6 +117,10 @@ func main() {
 		}
 		id := chi.URLParam(r, "id")
 		action := chi.URLParam(r, "action")
+		if !isValidIMDbID(id) {
+			http.Error(w, "Not a valid IMDb ID", http.StatusBadRequest)
+			return
+		}
 		switch action {
 		case "delete":
 			err := removeID(idData, id, FILENAME)
@@ -127,7 +131,6 @@ func main() {
 			w.WriteHeader(http.StatusOK)
 			fmt.Fprintf(w, "ID: %s DELETED FROM IDS\n", id)
 		case "add":
-			// Also appending to current working server instance
 			err := addID(idData, id, FILENAME)
 			if err != nil {
 				http.Error(w, fmt.Sprintf("Error adding ID: %s", err), http.StatusBadRequest)

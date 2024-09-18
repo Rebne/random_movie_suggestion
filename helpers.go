@@ -88,15 +88,13 @@ func isValidIMDbID(id string) bool {
 }
 
 func addID(dataSet IDdata, movieID string, filename string) error {
+
 	dataSet.IDs = append(dataSet.IDs, ID{MovieID: movieID, Index: dataSet.Length})
 	dataSet.Length++
 	return writeIdData(filename, dataSet)
 }
 
 func removeID(dataSet IDdata, movieID string, filename string) error {
-	if !isValidIMDbID(movieID) {
-		return fmt.Errorf("not a valid IMDb ID")
-	}
 	for i := range dataSet.IDs {
 		if dataSet.IDs[i].MovieID == movieID {
 			dataSet.IDs = append(dataSet.IDs[:i], dataSet.IDs[i+1:]...)
