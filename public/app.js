@@ -36,13 +36,14 @@ async function initializeLocalStorage() {
             const response = await fetch('/api/data/length');
             const data = await response.json();
             const current = parseInt(localStorage.getItem('totalIds'));
+            console.log(current, data.length)
             if (current != data.length) {
                 const updateResponse = await fetch('/api/data/new', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ currentLength: localStorage.getItem('length') })
+                    body: JSON.stringify({ currentLength: localStorage.getItem('totalIds') })
                 });
                 const updateData = await updateResponse.json();
                 setData(updateData.newIDs);
