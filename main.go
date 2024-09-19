@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -90,7 +89,6 @@ func main() {
 	})
 
 	r.Post("/generate", func(w http.ResponseWriter, r *http.Request) {
-		time.Sleep(time.Second * 1)
 		err := r.ParseForm()
 		if err != nil {
 			http.Error(w, "Error parsing form data", http.StatusBadRequest)

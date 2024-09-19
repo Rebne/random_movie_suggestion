@@ -58,6 +58,8 @@ async function initializeLocalStorage() {
 htmx.onLoad(async (elt) => {
     if (elt.tagName == 'BODY') {
         await initializeLocalStorage();
-        htmx.ajax('POST', '/generate', { target: '#container', values: { 'movieID': popIDFromLocalStorage() } });
+        setTimeout(() => {
+            htmx.ajax('POST', '/generate', { target: '#container', values: { 'movieID': popIDFromLocalStorage() } });
+        }, 1000);
     }
 })
