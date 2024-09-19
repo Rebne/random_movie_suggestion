@@ -26,9 +26,7 @@ async function initializeLocalStorage() {
     try {
         if (localStorage.length <= 1) {
             const response = await fetch('/api/data');
-            const responseText = await response.text();
-            console.log('Response from /api/data:', responseText);
-            const data = JSON.parse(responseText);
+            const data = response.json();
             const ids = data.ids;
             if (localStorage.length == 0) {
                 localStorage.setItem('totalIds', data.total.toString());
@@ -36,12 +34,9 @@ async function initializeLocalStorage() {
             setData(ids);
         } else {
             const response = await fetch('/api/data/length');
-            const responseText = await response.text();
-            console.log('Response from /api/data/length:', responseText);
-            const data = JSON.parse(responseText);
+            const data = response.json();
             const current = parseInt(localStorage.getItem('totalIds'));
-            console.log(current, data.length)
-            if (current != data.length) {
+            if (current < data.length) {
                 const updateResponse = await fetch('/api/data/new', {
                     method: 'POST',
                     headers: {
@@ -49,20 +44,13 @@ async function initializeLocalStorage() {
                     },
                     body: JSON.stringify({ currentLength: localStorage.getItem('totalIds') })
                 });
-                const updateResponseText = await updateResponse.text();
-                console.log('Response from /api/data/new:', updateResponseText);
-                const updateData = JSON.parse(updateResponseText);
+                const updateData = updateResponse.json();
                 setData(updateData.newIDs);
                 localStorage.setItem('totalIds', updateData.newLength);
             }
         }
     } catch (error) {
         console.error('Error occurred fetching API data from server: ', error);
-        console.error('Error details:', error.message);
-        if (error.response) {
-            console.error('Response status:', error.response.status);
-            console.error('Response text:', await error.response.text());
-        }
     }
 }
 

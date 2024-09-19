@@ -65,6 +65,7 @@ func main() {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(data)
 	})
+
 	r.Post("/api/data/new", func(w http.ResponseWriter, r *http.Request) {
 		var requestData struct {
 			CurrentLength string `json:"currentLength"`
