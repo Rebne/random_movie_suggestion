@@ -26,7 +26,7 @@ async function initializeLocalStorage() {
     try {
         if (localStorage.length <= 1) {
             const response = await fetch('/api/data');
-            const data = response.json();
+            const data = await response.json();
             const ids = data.ids;
             if (localStorage.length == 0) {
                 localStorage.setItem('totalIds', data.total.toString());
@@ -34,7 +34,7 @@ async function initializeLocalStorage() {
             setData(ids);
         } else {
             const response = await fetch('/api/data/length');
-            const data = response.json();
+            const data = await response.json();
             const current = parseInt(localStorage.getItem('totalIds'));
             if (current < data.length) {
                 const updateResponse = await fetch('/api/data/new', {
@@ -44,7 +44,7 @@ async function initializeLocalStorage() {
                     },
                     body: JSON.stringify({ currentLength: localStorage.getItem('totalIds') })
                 });
-                const updateData = updateResponse.json();
+                const updateData = await updateResponse.json();
                 setData(updateData.newIDs);
                 localStorage.setItem('totalIds', updateData.newLength);
             }
