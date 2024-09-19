@@ -146,6 +146,10 @@ func main() {
 			w.WriteHeader(http.StatusOK)
 			fmt.Fprintf(w, "ID: %s DELETED FROM IDS\n", id)
 		case "add":
+			if !idExists(idData, id) {
+				http.Error(w, "ID already exists in the JSON data", http.StatusBadRequest)
+				return
+			}
 			err := addID(idData, id, FILENAME)
 			if err != nil {
 				http.Error(w, fmt.Sprintf("Error adding ID: %s", err), http.StatusBadRequest)

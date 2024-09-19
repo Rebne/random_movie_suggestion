@@ -154,3 +154,12 @@ func writeIdData(filename string, data IDdata) error {
 	}
 	return nil
 }
+
+func idExists(data IDdata, id string) bool {
+	for _, existingID := range data.IDs {
+		if existingID.MovieID == id {
+			return true
+		}
+	}
+	return false
+}
