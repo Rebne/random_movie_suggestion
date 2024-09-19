@@ -1,5 +1,5 @@
 {
-    "length": 44,
+    "length": 43,
     "ids": [
         {
             "movieID": "tt0118884",
@@ -212,13 +212,8 @@
             "title": "Glass Onion"
         },
         {
-            "movieID": "tt0064116",
-            "index": 42,
-            "title": "Once Upon a Time in the West"
-        },
-        {
             "movieID": "tt1182345",
-            "index": 43,
+            "index": 42,
             "title": "Moon"
         }
     ]

@@ -66,17 +66,19 @@ func main() {
 		json.NewEncoder(w).Encode(data)
 	})
 	r.Post("/api/data/new", func(w http.ResponseWriter, r *http.Request) {
-		err := r.ParseForm()
-		if err != nil {
-			http.Error(w, "Error parsing form data", http.StatusBadRequest)
-			return
+		var requestData struct {
+			CurrentLength string `json:"currentLength"`
 		}
-		prev, err := strconv.Atoi(r.FormValue("currentLength"))
+		err := json.NewDecoder(r.Body).Decode(&requestData)
 		if err != nil {
-			http.Error(w, "Error formatting currentLength to integer", http.StatusBadRequest)
-			return
+			http.Error(w, "Error parsing JSON data", http.StatusBadRequest)
 		}
-		newIDs, err := getNewIDs(prev, idData)
+		fmt.Printf("Received currentLength: %s\n", requestData.CurrentLength)
+		currLength, err := strconv.Atoi(requestData.CurrentLength)
+		if err != nil {
+			http.Error(w, "Error converting currentLength to integer", http.StatusBadRequest)
+		}
+		newIDs, err := getNewIDs(currLength, idData)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
