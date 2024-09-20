@@ -6,16 +6,28 @@ COPY go.mod go.sum ./
 
 RUN go mod download
 
-COPY public ./public/
+COPY web/static ./web/static/
 
-COPY home_templ.txt ./
+COPY web/views/home/*.txt ./web/views/home/
 
-COPY *.go ./
+COPY web/views/home/*.go ./web/views/home/
+
+COPY services/*.go ./services/
+
+COPY models/*.go ./models/
+
+COPY helpers/*.go ./helpers/
+
+COPY handlers/*.go ./handlers/
+
+
+
+COPY cmd/*.go ./
 
 COPY .env ./
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o /movie-generator
 
-COPY id_data.json ./
+COPY data/id_data.json ./data/
 
 CMD ["/movie-generator"]
