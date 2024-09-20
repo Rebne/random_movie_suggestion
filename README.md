@@ -52,6 +52,31 @@ or
 go run cmd/main.go
 ```
 
+### Docker
+
+This project includes `Dockerfile`
+
+To use it you need to have Docker installed on your computer.
+
+To build a Docker image:
+```
+sudo docker build -t <your-image-name><:tag>
+```
+`tag` can be left out, then latest is automatocally added
+
+Example:
+```
+sudo docker build -t movie-generator:1.0
+````
+
+To run :
+```
+sudo docker run -p <your port>:<port set in ENV variable> <image name or ID>
+```
+Example:
+```
+sudo docker run -p 7000:8080 movie-generator:1.0
+
 You can also add or delete movies from the list using the secret endpoint.
 
 The secret endpoint is:
