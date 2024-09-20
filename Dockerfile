@@ -21,7 +21,6 @@ COPY helpers/*.go ./helpers/
 COPY handlers/*.go ./handlers/
 
 
-
 COPY cmd/*.go ./
 
 COPY .env ./

@@ -8,6 +8,6 @@ fly.toml
 web/views/*.go
 web/views/*.txt
 
-web/styles/styles.css
+web/static/css/styles.css
 
 node_modules/
