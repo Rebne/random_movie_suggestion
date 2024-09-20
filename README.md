@@ -76,6 +76,7 @@ sudo docker run -p <your port>:<port set in ENV variable> <image name or ID>
 Example:
 ```
 sudo docker run -p 7000:8080 movie-generator:1.0
+```
 
 You can also add or delete movies from the list using the secret endpoint.
 
