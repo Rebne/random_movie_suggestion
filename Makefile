@@ -1,14 +1,18 @@
+ROOT=cmd
 BINARY_NAME=myapp
 PORT=8080
 
 build:
-	go build -o ${BINARY_NAME} main.go
+	go build -o ${BINARY_NAME} ${ROOT}/.
 
 run:
-	go run main.go
+	go run ${ROOT}/main.go
 
 templ:
 	templ generate -watch -proxy=http://localhost:${PORT}
 
 css:
-	tailwindcss -i ./styles.css -o public/styles.css --watch
+	tailwindcss -i ./web/styles/styles.css -o ./web/static/css/styles.css --watch
+
+dev: templ css
+	go run ${ROOT}/main.go

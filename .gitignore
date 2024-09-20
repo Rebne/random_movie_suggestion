@@ -5,8 +5,9 @@ tmp/
 fly.toml
 .env
 
-home_templ.go
-home_templ.txt
-public/styles.css
+web/views/*.go
+web/views/*.txt
+
+web/styles/styles.css
 
 node_modules/
