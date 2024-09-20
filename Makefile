@@ -14,5 +14,5 @@ templ:
 css:
 	tailwindcss -i ./web/styles/styles.css -o ./web/static/css/styles.css --watch
 
-dev: templ css
-	go run ${ROOT}/main.go
+tailwind:
+	tailwindcss -i ./web/styles/styles.css -o ./web/static/css/styles.css
