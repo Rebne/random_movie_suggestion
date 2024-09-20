@@ -78,6 +78,16 @@ Example:
 sudo docker run -p 7000:8080 movie-generator:1.0
 ```
 
+### Tech stack used
+
+`Golang` (backend/server)
+`Templ` (templating with types)
+`Tailwindcss` (for css)
+`HTMX` (frontend JS 'framework')
+`DaisyUI` (Tailwind UI library)
+`OMDb` (API for movie data)
+`Javascript` (frontend stuff, managing localstorage)
+
 You can also add or delete movies from the list using the secret endpoint.
 
 The secret endpoint is:
