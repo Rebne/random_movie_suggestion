@@ -80,12 +80,12 @@ sudo docker run -p 7000:8080 movie-generator:1.0
 
 ### Tech stack used
 
-`Golang` (backend/server)
-`Templ` (templating with types)
-`Tailwindcss` (for css)
-`HTMX` (frontend JS 'framework')
-`DaisyUI` (Tailwind UI library)
-`OMDb` (API for movie data)
+`Golang` (backend/server)<br>
+`Templ` (templating with types)<br>
+`Tailwindcss` (for css)<br>
+`HTMX` (frontend JS 'framework')<br>
+`DaisyUI` (Tailwind UI library)<br>
+`OMDb` (API for movie data)<br>
 `Javascript` (frontend stuff, managing localstorage)
 
 You can also add or delete movies from the list using the secret endpoint.
