@@ -1,7 +1,11 @@
-# movie_generator
-Generates a random movie in Elsa &amp; Rene recommendations
+# elsarene_random_movie_generator
+Generates a random movie from a JSON files and displays it as card.
 
-All you have to do is press generate and it will give you a random movie.
+All you have to do is got to the site and refresh for a new one.
+Recommendations are not duplicated.
+
+Demo here:
+https://movie-generator.fly.dev/
 
 ### Dependencies and running
 
