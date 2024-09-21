@@ -5,7 +5,7 @@ tmp/
 fly.toml
 .env
 
-web/views/*.go
+web/views/**/*.go
 web/views/*.txt
 
 web/static/css/styles.css
