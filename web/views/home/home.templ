@@ -42,7 +42,7 @@ templ NavBar() {
 }
 
 templ MovieCard(data models.MovieData) {
-	<div class="card bg-base-100 w-96 shadow-xl">
+	<div class="card bg-base-100 max-w-sm w-full shadow-xl">
 		<figure>
 			<img
 				src={ data.Poster }
@@ -72,7 +72,7 @@ templ AboutDrawer() {
 			<label for="my-drawer-4" class="drawer-overlay"></label>
 			<div class="menu p-4 w-80 h-full bg-base-200 text-base-content">
 				<div class="flex justify-end">
-					<label for="my-drawer-4" class="btn btn-square btn-ghost absolute top-2 right-2">
+					<label for="my-drawer-4" class="m-0 btn btn-square btn-ghost absolute top-2 right-2 float-right">
 						<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 						</svg>
