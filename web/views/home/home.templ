@@ -10,7 +10,15 @@ templ App(title string) {
 	@Layout(title) {
 		@NavBar()
 		<div class="flex-1 flex items-center justify-center">
-			<div id="container">
+			<div
+				id="container"
+				hx-vals="js:{movieID: popIDFromLocalStorage()}"
+				hx-post="/generate"
+				hx-trigger="local-storage-updated"
+				hx-target="#container"
+				hx-on::before-request="initializeLocalStorage()"
+				hx-swap="innerHTML"
+			>
 				@MovieCardSkeleton()
 			</div>
 		</div>
@@ -122,7 +130,7 @@ templ AboutDrawer() {
 }
 
 templ MovieCardSkeleton() {
-	<div class="card bg-base-100 w-96 shadow-xl">
+	<div id="card-skeleton" class="card bg-base-100 w-96 shadow-xl">
 		<figure>
 			<div class="w-[300px] h-[444px] skeleton"></div>
 		</figure>

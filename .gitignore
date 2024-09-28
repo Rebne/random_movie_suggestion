@@ -11,3 +11,5 @@ web/views/**/*.txt
 web/static/css/styles.css
 
 node_modules/
+
+Dockerfile.busybox

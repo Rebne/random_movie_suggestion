@@ -49,16 +49,8 @@ async function initializeLocalStorage() {
                 localStorage.setItem('totalIds', updateData.newLength);
             }
         }
+        document.body.dispatchEvent(new Event('local-storage-updated'));
     } catch (error) {
         console.error('Error occurred fetching API data from server: ', error);
     }
 }
-
-htmx.onLoad(async (elt) => {
-    if (elt.tagName == 'BODY') {
-        await initializeLocalStorage();
-        setTimeout(() => {
-            htmx.ajax('POST', '/generate', { target: '#container', values: { 'movieID': popIDFromLocalStorage() } });
-        }, 1000);
-    }
-})
