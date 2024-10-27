@@ -5,7 +5,7 @@ All you have to do is got to the site and refresh for a new one.
 Recommendations are not duplicated.
 
 Demo here:
-https://movie-generator.fly.dev/
+https://elsarene.fly.dev/
 
 ### Dependencies and running
 
