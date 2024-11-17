@@ -10,15 +10,7 @@ templ App(title string) {
 	@Layout(title) {
 		@NavBar()
 		<div class="flex-1 flex items-center justify-center">
-			<div
-				id="container"
-				hx-vals="js:{movieID: popIDFromLocalStorage()}"
-				hx-post="/generate"
-				hx-trigger="local-storage-updated"
-				hx-target="#container"
-				hx-on::before-request="initializeLocalStorage()"
-				hx-swap="innerHTML"
-			>
+			<div id="container">
 				@MovieCardSkeleton()
 			</div>
 		</div>
