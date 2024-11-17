@@ -16,3 +16,8 @@ css:
 
 tailwind:
 	tailwindcss -i ./web/styles/styles.css -o ./web/static/css/styles.css
+docker-build:
+	docker build -t elsarene .
+docker-run:
+	docker run -p 8080:8080 elsarene
+
