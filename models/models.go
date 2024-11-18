@@ -1,9 +1,9 @@
 package models
 
 type ID struct {
-	MovieID string `json:"movieID"`
-	Index   int    `json:"index"`
-	Title   string `json:"title"`
+	MovieID string `json:"movieID" db:"movie_id"`
+	Index   int    `json:"index" db:"index"`
+	Title   string `json:"title" db:"title"`
 }
 
 type IDdata struct {

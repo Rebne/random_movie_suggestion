@@ -61,7 +61,7 @@ func GetMovieDataHandler(w http.ResponseWriter, r *http.Request, idData *models.
 	if err != nil {
 		http.Error(w, "Error getting table length from database", http.StatusInternalServerError)
 	}
-	ids, err := data.GetAllMoviesDB()
+	ids, err := data.GetAllMovieIdsDB()
 	if err != nil {
 		http.Error(w, "Error getting table length from database", http.StatusInternalServerError)
 	}

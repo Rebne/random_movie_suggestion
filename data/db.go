@@ -51,6 +51,30 @@ func init() {
 	}
 }
 
+func GetAllMoviesDB() (models.IDdata, error) {
+	var result models.IDdata
+	rows, err := db.Query("SELECT movie_id, title, index FROM movies")
+	if err != nil {
+		return models.IDdata{}, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id models.ID
+		if err := rows.Scan(&id); err != nil {
+			return models.IDdata{}, err
+		}
+		result.IDs = append(result.IDs, id)
+	}
+	if err = rows.Err(); err != nil {
+		return models.IDdata{}, err
+	}
+	result.Length, err = GetTableLengthDB()
+	if err != nil {
+		return models.IDdata{}, err
+	}
+	return result, nil
+}
+
 func GetTableLengthDB() (int, error) {
 	var rowCount int
 	err := db.QueryRow("SELECT COUNT(*) FROM movies").Scan(&rowCount)
@@ -60,7 +84,7 @@ func GetTableLengthDB() (int, error) {
 	return rowCount, nil
 }
 
-func GetAllMoviesDB() ([]string, error) {
+func GetAllMovieIdsDB() ([]string, error) {
 	var movieIDs []string
 	rows, err := db.Query("SELECT movie_id FROM movies")
 	if err != nil {
