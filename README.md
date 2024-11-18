@@ -1,4 +1,4 @@
-# elsarene_random_movie_generator
+# elsarene_random_movie_suggestion
 Generates a random movie from a JSON files and displays it as card.
 
 All you have to do is got to the site and refresh for a new one.
