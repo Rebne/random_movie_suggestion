@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/Rebne/movie_generator/data"
 	"github.com/Rebne/movie_generator/helpers"
 	"github.com/Rebne/movie_generator/models"
 	"github.com/Rebne/movie_generator/services"
@@ -43,17 +44,30 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetTotalMovieCountHandler(w http.ResponseWriter, r *http.Request, idData *models.IDdata) {
+	length, err := data.GetTableLengthDB()
+	if err != nil {
+		http.Error(w, "Error getting table length from database", http.StatusInternalServerError)
+		return
+	}
 	data := map[string]interface{}{
-		"length": idData.Length,
+		"length": length,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(data)
 }
 
 func GetMovieDataHandler(w http.ResponseWriter, r *http.Request, idData *models.IDdata) {
+	total, err := data.GetTableLengthDB()
+	if err != nil {
+		http.Error(w, "Error getting table length from database", http.StatusInternalServerError)
+	}
+	ids, err := data.GetAllMoviesDB()
+	if err != nil {
+		http.Error(w, "Error getting table length from database", http.StatusInternalServerError)
+	}
 	data := map[string]interface{}{
-		"total": idData.Length,
-		"ids":   helpers.GetMovieIDs(idData),
+		"total": total,
+		"ids":   ids,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(data)

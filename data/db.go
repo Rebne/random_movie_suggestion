@@ -2,9 +2,12 @@ package data
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/Rebne/movie_generator/models"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -41,6 +44,11 @@ func init() {
 	}
 
 	fmt.Println("Successfully connected to Postgres database")
+
+	err = addMoviesFromJSON("./data/id_data.json")
+	if err != nil {
+		log.Printf("Warning: Could not load initial movie data: %v", err)
+	}
 }
 
 func GetTableLengthDB() (int, error) {
@@ -70,4 +78,46 @@ func GetAllMoviesDB() ([]string, error) {
 		return nil, err
 	}
 	return movieIDs, nil
+}
+
+func addMoviesFromJSON(filepath string) error {
+	fileContent, err := os.ReadFile(filepath)
+	if err != nil {
+		return fmt.Errorf("error reading file: %v", err)
+	}
+
+	var idData models.IDdata
+	if err := json.Unmarshal(fileContent, &idData); err != nil {
+		return fmt.Errorf("error unmarshaling JSON: %v", err)
+	}
+
+	// Begin transaction
+	tx, err := db.Begin()
+	if err != nil {
+		return fmt.Errorf("error starting transaction: %v", err)
+	}
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare(`
+		INSERT INTO movies (movie_id, title) 
+		VALUES ($1, $2)
+		ON CONFLICT (movie_id) DO NOTHING
+	`)
+	if err != nil {
+		return fmt.Errorf("error preparing statement: %v", err)
+	}
+	defer stmt.Close()
+
+	for _, movie := range idData.IDs {
+		_, err = stmt.Exec(movie.MovieID, movie.Title)
+		if err != nil {
+			return fmt.Errorf("error inserting movie %s: %v", movie.MovieID, err)
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		return fmt.Errorf("error committing transaction: %v", err)
+	}
+
+	return nil
 }
