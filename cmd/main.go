@@ -6,9 +6,11 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/Rebne/movie_generator/data"
 	"github.com/Rebne/movie_generator/handlers"
 	"github.com/Rebne/movie_generator/models"
-	"github.com/Rebne/movie_generator/services"
+
+	// "github.com/Rebne/movie_generator/services"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
@@ -27,15 +29,20 @@ func init() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	FILEPATH = os.Getenv("FILEPATH")
 	PORT = os.Getenv("PORT")
-	if FILEPATH == "" || PORT == "" {
+	// if FILEPATH == "" || PORT == "" {
+	if PORT == "" {
 		log.Fatal("Missing required environment variables from main.go")
 	}
-	idData, err = services.ReadIDData(FILEPATH)
+	db := data.InitDB()
+	err = db.Ping()
 	if err != nil {
-		log.Fatal("Error reading JSON from file", err.Error())
+		log.Fatal("Something went wrong with the database in main init()")
 	}
+	// idData, err = services.ReadIDData(FILEPATH)
+	// if err != nil {
+	// 	log.Fatal("Error reading JSON from file", err.Error())
+	// }
 }
 
 func main() {
