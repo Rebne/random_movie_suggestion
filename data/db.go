@@ -37,14 +37,11 @@ func init() {
 		movie_id TEXT NOT NULL UNIQUE,
 		title TEXT NOT NULL UNIQUE
 	)`
-
 	_, err = db.Exec(createTableSQL)
 	if err != nil {
 		log.Fatal("Error creating table:", err)
 	}
-
 	fmt.Println("Successfully connected to Postgres database")
-
 	err = addMoviesFromJSON("./data/id_data.json")
 	if err != nil {
 		log.Printf("Warning: Could not load initial movie data: %v", err)
@@ -109,19 +106,15 @@ func addMoviesFromJSON(filepath string) error {
 	if err != nil {
 		return fmt.Errorf("error reading file: %v", err)
 	}
-
 	var idData models.IDdata
 	if err := json.Unmarshal(fileContent, &idData); err != nil {
 		return fmt.Errorf("error unmarshaling JSON: %v", err)
 	}
-
-	// Begin transaction
 	tx, err := db.Begin()
 	if err != nil {
 		return fmt.Errorf("error starting transaction: %v", err)
 	}
 	defer tx.Rollback()
-
 	stmt, err := tx.Prepare(`
 		INSERT INTO movies (movie_id, title) 
 		VALUES ($1, $2)
@@ -131,17 +124,14 @@ func addMoviesFromJSON(filepath string) error {
 		return fmt.Errorf("error preparing statement: %v", err)
 	}
 	defer stmt.Close()
-
 	for _, movie := range idData.IDs {
 		_, err = stmt.Exec(movie.MovieID, movie.Title)
 		if err != nil {
 			return fmt.Errorf("error inserting movie %s: %v", movie.MovieID, err)
 		}
 	}
-
 	if err = tx.Commit(); err != nil {
 		return fmt.Errorf("error committing transaction: %v", err)
 	}
-
 	return nil
 }
