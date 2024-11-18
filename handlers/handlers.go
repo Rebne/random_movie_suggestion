@@ -126,14 +126,16 @@ func ShowMovieListHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-
-	fileContents, err := os.ReadFile(FILEPATH)
+	data, err := data.GetAllMoviesDB()
 	if err != nil {
-		http.Error(w, "Error reading file", http.StatusInternalServerError)
+		http.Error(w, "Error getting movies from database", http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(fileContents)
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		http.Error(w, "Error encoding response", http.StatusInternalServerError)
+		return
+	}
 }
 
 func ManageMovieListHandler(w http.ResponseWriter, r *http.Request, idData *models.IDdata) {

@@ -57,7 +57,7 @@ func GetAllMoviesDB() (models.IDdata, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var id models.ID
-		if err := rows.Scan(&id); err != nil {
+		if err := rows.Scan(&id.MovieID, &id.Title, &id.Index); err != nil {
 			return models.IDdata{}, err
 		}
 		result.IDs = append(result.IDs, id)
