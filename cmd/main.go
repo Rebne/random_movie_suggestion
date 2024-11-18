@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Rebne/movie_generator/data"
 	"github.com/Rebne/movie_generator/handlers"
 	"github.com/Rebne/movie_generator/models"
 
@@ -33,11 +32,6 @@ func init() {
 	// if FILEPATH == "" || PORT == "" {
 	if PORT == "" {
 		log.Fatal("Missing required environment variables from main.go")
-	}
-	db := data.InitDB()
-	err = db.Ping()
-	if err != nil {
-		log.Fatal("Something went wrong with the database in main init()")
 	}
 	// idData, err = services.ReadIDData(FILEPATH)
 	// if err != nil {
