@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/Rebne/movie_generator/handlers"
-	"github.com/Rebne/movie_generator/models"
 
 	// "github.com/Rebne/movie_generator/services"
 	"github.com/go-chi/chi/v5"
@@ -20,7 +19,6 @@ var (
 	SECRET_TOKEN string
 	FILEPATH     string
 	PORT         string
-	idData       models.IDdata
 )
 
 func init() {
@@ -56,7 +54,7 @@ func main() {
 
 	r.Get("/secret/{token}/showlist", handlers.ShowMovieListHandler)
 
-	r.Post("/secret/{token}/{action}/{id}", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/secret/{token}/{action}/{id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.ManageMovieListHandler(w, r)
 	})
 
