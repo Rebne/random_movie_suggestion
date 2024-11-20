@@ -23,7 +23,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	connStr = os.Getenv("DATABSE_URL")
+	connStr = os.Getenv("DATABASE_URL")
 	db, err = sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal("Error opening database:", err)
