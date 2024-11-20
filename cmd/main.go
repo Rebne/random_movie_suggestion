@@ -17,7 +17,6 @@ import (
 var (
 	API_KEY      string
 	SECRET_TOKEN string
-	FILEPATH     string
 	PORT         string
 )
 

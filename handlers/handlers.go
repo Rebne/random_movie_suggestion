@@ -20,7 +20,6 @@ import (
 var (
 	API_KEY      string
 	SECRET_TOKEN string
-	FILEPATH     string
 )
 
 func init() {
@@ -29,9 +28,8 @@ func init() {
 		log.Fatal("Error loading .env file")
 	}
 	SECRET_TOKEN = os.Getenv("SECRET_TOKEN")
-	FILEPATH = os.Getenv("FILEPATH")
 
-	if SECRET_TOKEN == "" || FILEPATH == "" {
+	if SECRET_TOKEN == "" {
 		log.Fatal("Missing required environment variables")
 	}
 }

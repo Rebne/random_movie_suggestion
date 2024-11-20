@@ -4,6 +4,7 @@ tmp/
 .github
 fly.toml
 .env
+.localenv
 
 web/static/css/styles.css
 
