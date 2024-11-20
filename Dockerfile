@@ -20,13 +20,13 @@ COPY helpers/*.go ./helpers/
 
 COPY handlers/*.go ./handlers/
 
+COPY data/*.go ./data/
+
 
 COPY cmd/*.go ./
 
 COPY .env ./
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o /movie-generator
-
-COPY data/id_data.json ./data/
 
 CMD ["/movie-generator"]
