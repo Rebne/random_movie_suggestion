@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/Rebne/movie_generator/models"
+	"github.com/Rebne/movie_generator/services"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -99,6 +100,40 @@ func GetAllMovieIdsDB() ([]string, error) {
 		return nil, err
 	}
 	return movieIDs, nil
+}
+
+func DeleteMovieDB(id string) error {
+	result, err := db.Exec("DELETE FROM movies WHERE movie_id = $1 RETURNING *", id)
+	if err != nil {
+		return err
+	}
+	rowsAffected, _ := result.RowsAffected()
+	if rowsAffected == 0 {
+		return fmt.Errorf("ID %s does not exist", id)
+	}
+	return nil
+}
+func AddNewMovieDB(id string) error {
+	var exists bool
+	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM movies WHERE movie_id = $1)", id).Scan(&exists)
+	if err != nil {
+		return fmt.Errorf("error checking if movie exists: %v", err)
+	}
+	if exists {
+		return fmt.Errorf("movie with ID %s already exists", id)
+	}
+	movieData, err := services.FetchMovieData(id)
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec(`
+		INSERT INTO movies (movie_id, title)
+		VALUES ($1, $2)
+	`, id, movieData.Title)
+	if err != nil {
+		return fmt.Errorf("error inserting movie: %v", err)
+	}
+	return nil
 }
 
 func addMoviesFromJSON(filepath string) error {

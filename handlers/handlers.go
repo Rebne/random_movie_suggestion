@@ -10,7 +10,6 @@ import (
 
 	"github.com/Rebne/movie_generator/data"
 	"github.com/Rebne/movie_generator/helpers"
-	"github.com/Rebne/movie_generator/models"
 	"github.com/Rebne/movie_generator/services"
 	"github.com/Rebne/movie_generator/web/views/home"
 
@@ -29,11 +28,10 @@ func init() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	API_KEY = os.Getenv("API_KEY")
 	SECRET_TOKEN = os.Getenv("SECRET_TOKEN")
 	FILEPATH = os.Getenv("FILEPATH")
 
-	if API_KEY == "" || SECRET_TOKEN == "" || FILEPATH == "" {
+	if SECRET_TOKEN == "" || FILEPATH == "" {
 		log.Fatal("Missing required environment variables")
 	}
 }
@@ -43,7 +41,8 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	app.Render(r.Context(), w)
 }
 
-func GetTotalMovieCountHandler(w http.ResponseWriter, r *http.Request, idData *models.IDdata) {
+// Done
+func GetTotalMovieCountHandler(w http.ResponseWriter, r *http.Request) {
 	length, err := data.GetTableLengthDB()
 	if err != nil {
 		http.Error(w, "Error getting table length from database", http.StatusInternalServerError)
@@ -56,7 +55,8 @@ func GetTotalMovieCountHandler(w http.ResponseWriter, r *http.Request, idData *m
 	json.NewEncoder(w).Encode(data)
 }
 
-func GetMovieDataHandler(w http.ResponseWriter, r *http.Request, idData *models.IDdata) {
+// Done
+func GetMovieDataHandler(w http.ResponseWriter, r *http.Request) {
 	total, err := data.GetTableLengthDB()
 	if err != nil {
 		http.Error(w, "Error getting table length from database", http.StatusInternalServerError)
@@ -73,7 +73,8 @@ func GetMovieDataHandler(w http.ResponseWriter, r *http.Request, idData *models.
 	json.NewEncoder(w).Encode(data)
 }
 
-func UpdateMovieListHandler(w http.ResponseWriter, r *http.Request, idData *models.IDdata) {
+// Done
+func UpdateMovieListHandler(w http.ResponseWriter, r *http.Request) {
 	var requestData struct {
 		CurrentLength string `json:"currentLength"`
 	}
@@ -82,25 +83,25 @@ func UpdateMovieListHandler(w http.ResponseWriter, r *http.Request, idData *mode
 		http.Error(w, "Error parsing JSON data", http.StatusBadRequest)
 		return
 	}
-	fmt.Printf("Received currentLength: %s\n", requestData.CurrentLength)
 	currLength, err := strconv.Atoi(requestData.CurrentLength)
 	if err != nil {
 		http.Error(w, "Error converting currentLength to integer", http.StatusBadRequest)
 		return
 	}
-	newIDs, err := helpers.GetNewIDs(currLength, idData)
+	newMovieData, err := helpers.GetNewIDs(currLength)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 	data := map[string]interface{}{
-		"newLength": idData.Length,
-		"newIDs":    newIDs,
+		"newLength": newMovieData.Length,
+		"newIDs":    newMovieData.IDs,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(data)
 }
 
+// Done
 func GenerateMovieCardHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -109,7 +110,7 @@ func GenerateMovieCardHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	movieID := r.FormValue("movieID")
-	data, err := services.FetchMovieData(movieID, API_KEY)
+	data, err := services.FetchMovieData(movieID)
 	if err != nil {
 		fmt.Println("Error fetching movie data:", err)
 		http.Error(w, "Failed to fetch movie data", http.StatusInternalServerError)
@@ -120,6 +121,7 @@ func GenerateMovieCardHandler(w http.ResponseWriter, r *http.Request) {
 	component.Render(r.Context(), w)
 }
 
+// Done
 func ShowMovieListHandler(w http.ResponseWriter, r *http.Request) {
 	token := chi.URLParam(r, "token")
 	if token != SECRET_TOKEN {
@@ -138,7 +140,7 @@ func ShowMovieListHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func ManageMovieListHandler(w http.ResponseWriter, r *http.Request, idData *models.IDdata) {
+func ManageMovieListHandler(w http.ResponseWriter, r *http.Request) {
 	token := chi.URLParam(r, "token")
 	if token != SECRET_TOKEN {
 		http.NotFound(w, r)
@@ -152,7 +154,7 @@ func ManageMovieListHandler(w http.ResponseWriter, r *http.Request, idData *mode
 	}
 	switch action {
 	case "delete":
-		err := services.RemoveID(idData, id, FILEPATH)
+		err := data.DeleteMovieDB(id)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Error deleting ID: %s", err), http.StatusBadRequest)
 			return
@@ -160,13 +162,13 @@ func ManageMovieListHandler(w http.ResponseWriter, r *http.Request, idData *mode
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "ID: %s DELETED FROM IDS\n", id)
 	case "add":
-		if !helpers.IdExists(idData, id) {
-			http.Error(w, "ID already exists in the JSON data", http.StatusBadRequest)
-			return
-		}
-		err := services.AddID(idData, id, FILEPATH)
+		// if !helpers.IdExists(idData, id) {
+		// 	http.Error(w, "ID already exists in the JSON data", http.StatusBadRequest)
+		// 	return
+		// }
+		err := data.AddNewMovieDB(id)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("Error adding ID: %s", err), http.StatusBadRequest)
+			http.Error(w, fmt.Sprintf("Error adding ID: %s", err), http.StatusInternalServerError)
 			return
 		}
 		w.WriteHeader(http.StatusOK)

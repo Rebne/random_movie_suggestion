@@ -2,11 +2,13 @@ package helpers
 
 import (
 	"fmt"
-	"github.com/Rebne/movie_generator/models"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/Rebne/movie_generator/data"
+	"github.com/Rebne/movie_generator/models"
 )
 
 func GetMovieIDs(data *models.IDdata) []string {
@@ -49,17 +51,21 @@ func IsValidIMDbID(id string) bool {
 	return match
 }
 
-func GetNewIDs(prevLength int, data *models.IDdata) ([]string, error) {
-	var result []string
-	for _, item := range data.IDs {
+func GetNewIDs(prevLength int) (models.IDdata, error) {
+	var temp []models.ID
+	movieData, err := data.GetAllMoviesDB()
+	if err != nil {
+		return models.IDdata{}, err
+	}
+	for _, item := range movieData.IDs {
 		if item.Index >= prevLength {
-			result = append(result, item.MovieID)
+			temp = append(temp, item)
 		}
 	}
-	if len(result) == 0 {
-		return result, fmt.Errorf("error no new IDS found")
+	if len(temp) == 0 {
+		return models.IDdata{}, fmt.Errorf("error no new IDS found")
 	}
-	return result, nil
+	return models.IDdata{IDs: temp, Length: movieData.Length}, nil
 }
 
 func IdExists(data *models.IDdata, id string) bool {

@@ -29,14 +29,9 @@ func init() {
 		log.Fatal("Error loading .env file")
 	}
 	PORT = os.Getenv("PORT")
-	// if FILEPATH == "" || PORT == "" {
 	if PORT == "" {
 		log.Fatal("Missing required environment variables from main.go")
 	}
-	// idData, err = services.ReadIDData(FILEPATH)
-	// if err != nil {
-	// 	log.Fatal("Error reading JSON from file", err.Error())
-	// }
 }
 
 func main() {
@@ -46,15 +41,15 @@ func main() {
 	r.Get("/", handlers.HomeHandler)
 
 	r.Get("/api/data/length", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetTotalMovieCountHandler(w, r, &idData)
+		handlers.GetTotalMovieCountHandler(w, r)
 	})
 
 	r.Get("/api/data", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetMovieDataHandler(w, r, &idData)
+		handlers.GetMovieDataHandler(w, r)
 	})
 
 	r.Post("/api/data/new", func(w http.ResponseWriter, r *http.Request) {
-		handlers.UpdateMovieListHandler(w, r, &idData)
+		handlers.UpdateMovieListHandler(w, r)
 	})
 
 	r.Post("/generate", handlers.GenerateMovieCardHandler)
@@ -62,7 +57,7 @@ func main() {
 	r.Get("/secret/{token}/showlist", handlers.ShowMovieListHandler)
 
 	r.Post("/secret/{token}/{action}/{id}", func(w http.ResponseWriter, r *http.Request) {
-		handlers.ManageMovieListHandler(w, r, &idData)
+		handlers.ManageMovieListHandler(w, r)
 	})
 
 	fileServer := http.FileServer(http.Dir("web/static"))

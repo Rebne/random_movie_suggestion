@@ -24,8 +24,8 @@ func init() {
 	}
 }
 
-func FetchMovieData(id string, apiKey string) (models.MovieData, error) {
-	url := fmt.Sprintf("http://www.omdbapi.com/?i=%s&apikey=%s", id, apiKey)
+func FetchMovieData(id string) (models.MovieData, error) {
+	url := fmt.Sprintf("http://www.omdbapi.com/?i=%s&apikey=%s", id, API_KEY)
 	resp, err := http.Get(url)
 	if err != nil {
 		return models.MovieData{}, err
@@ -43,7 +43,7 @@ func FetchMovieData(id string, apiKey string) (models.MovieData, error) {
 }
 
 func AddID(dataSet *models.IDdata, movieID string, FILEPATH string) error {
-	movieData, err := FetchMovieData(movieID, API_KEY)
+	movieData, err := FetchMovieData(movieID)
 	if err != nil {
 		return fmt.Errorf("failed to fetch moviedata from OMD")
 	}
