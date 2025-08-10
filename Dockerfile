@@ -20,8 +20,7 @@ COPY helpers/*.go ./helpers/
 
 COPY handlers/*.go ./handlers/
 
-COPY data/*.go ./data/
-
+COPY data/ ./data/
 
 COPY cmd/*.go ./
 
