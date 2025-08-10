@@ -17,8 +17,6 @@ COPY . .
 
 COPY --from=css-builder /app/styles.css ./web/static/css/styles.css
 
-RUN go mod download
-
-RUN CGO_ENABLED=0 GOOS=linux go build -o /movie-generator
+RUN cd cmd && CGO_ENABLED=0 GOOS=linux go build -o /movie-generator
 
 CMD ["/movie-generator"]
