@@ -13,30 +13,11 @@ FROM golang:alpine3.20
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
+COPY . .
 
-RUN go mod download
-
-COPY web/static ./web/static/
 COPY --from=css-builder /app/styles.css ./web/static/css/styles.css
 
-COPY web/views/home/*.txt ./web/views/home/
-
-COPY web/views/home/*.go ./web/views/home/
-
-COPY services/*.go ./services/
-
-COPY models/*.go ./models/
-
-COPY helpers/*.go ./helpers/
-
-COPY handlers/*.go ./handlers/
-
-COPY data/ ./data/
-
-COPY cmd/*.go ./
-
-COPY .env ./
+RUN go mod download
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o /movie-generator
 
